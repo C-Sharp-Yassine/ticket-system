@@ -19,3 +19,19 @@ test("GET /api/tickets returns a list of tickets", async () => {
 
   assert.ok(Array.isArray(response.body));
 });  
+
+test("POST /api/tickets saves the ticket", async () => {
+  const createResponse = await request(app)
+    .post("/api/tickets")
+    .expect(201);
+
+  const listResponse = await request(app)
+    .get("/api/tickets")
+    .expect(200);
+
+  const savedTicket = listResponse.body.find(
+    (ticket) => ticket.code === createResponse.body.code
+  );
+
+  assert.ok(savedTicket);
+  });
