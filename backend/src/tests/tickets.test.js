@@ -11,3 +11,11 @@ test("POST /api/tickets creates a new ticket", async () => {
   assert.ok(response.body.code);
   assert.equal(response.body.used, false);
 });
+
+test("GET /api/tickets returns a list of tickets", async () => {
+  const response = await request(app)
+    .get("/api/tickets")
+    .expect(200);
+
+  assert.ok(Array.isArray(response.body));
+});  
