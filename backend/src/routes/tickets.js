@@ -66,7 +66,15 @@ router.patch("/use", (req, res) => {
     .get(code);
 
   if (!ticket) {
-    return res.status(404).json({ message: "Ticket not found" });
+    return res.status(404).json({
+      message: "Ticket not found",
+    });
+  }
+
+  if (ticket.used) {
+    return res.status(409).json({
+      message: "Ticket already used",
+    });
   }
 
   const usedAt = new Date().toISOString();
