@@ -42,3 +42,23 @@ test("PATCH /api/tickets/use marks a ticket as used", async () => {
   assert.equal(useResponse.body.used, true);
   assert.ok(useResponse.body.used_at);
 });
+
+test("PATCH /api/tickets/use prevents a ticket from being used twice", async () => {
+  const createResponse = await request(app)
+    .post("/api/tickets")
+    .expect(201);
+
+  const code = createResponse.body.code;
+
+  await request(app)
+    .patch("/api/tickets/use")
+    .send({ code })
+    .expect(200);
+
+  const secondUseResponse = await request(app)
+    .patch("/api/tickets/use")
+    .send({ code })
+    .expect(409);
+
+  assert.equal(secondUseResponse.body.message, "Ticket already used");
+});
