@@ -12,4 +12,8 @@ router.post("/", (req, res) => {
   res.status(201).json(ticket);
 });
 
+router.get("/", (req, res) => {
+  res.status(200).json([]);
+});
+
 export default router;
