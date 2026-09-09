@@ -35,3 +35,25 @@ test("creates a tickets when the Create Ticket is clicked", async () => {
     method: "POST",
   });
 });
+
+test("displays the created ticket code", async () => {
+  const mockTicket = {
+    id: 1,
+    code: "ABC123",
+    created_at: "2026-09-10T00:00:00.000Z",
+    used: false,
+    used_at: null,
+  };
+
+  global.fetch = vi.fn().mockResolvedValue({
+    ok: true,
+    json: async () => mockTicket,
+  });
+
+  const wrapper = mount(App);
+
+  await wrapper.find("button").trigger("click");
+  await wrapper.vm.$nextTick();
+
+  expect(wrapper.text()).toContain("ABC123");
+});
