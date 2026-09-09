@@ -117,6 +117,12 @@ router.delete("/:id", (req, res) => {
     });
   }
 
+  if (ticket.used) {
+    return res.status(409).json({
+      message: "Ticket already used",
+    });
+  }
+
   db.prepare("DELETE FROM tickets WHERE id = ?").run(id);
 
   return res.status(204).send();
