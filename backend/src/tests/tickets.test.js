@@ -71,3 +71,25 @@ test("PATCH /api/tickets/use returns 404 for an unknown ticket code", async () =
 
   assert.equal(response.body.message, "Ticket not found");
 });
+
+test("DELETE /api/tickets/:id deletes an unused ticket", async () => {
+  const createResponse = await request(app)
+    .post("/api/tickets")
+    .expect(201);
+
+    const id = createResponse.body.id;
+
+    await request(app)
+    .delete(`/api/tickets/${id}`)
+    .expect(204);
+
+    const listResponse = await request(app)
+    .get("/api/tickets")
+    .expect(200);
+
+    const deletedTicket = listResponse.body.find(
+      (ticket) => ticket.id === id,
+    );
+
+    assert.equal(deletedTicket, undefined);
+});
