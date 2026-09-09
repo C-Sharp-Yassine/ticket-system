@@ -93,3 +93,33 @@ test("DELETE /api/tickets/:id deletes an unused ticket", async () => {
 
     assert.equal(deletedTicket, undefined);
 });
+
+test("DELETE /api/tickets/:id prevents deletion of a used ticket", async () => {
+  const createResponse = await request(app)
+    .post("/api/tickets")
+    .expect(201);
+
+  const { id, code } = createResponse.body;
+
+  await request(app)
+    .patch("/api/tickets/use")
+    .send({ code })
+    .expect(200);
+
+  const deleteResponse = await request(app)
+    .delete(`/api/tickets/${id}`)
+    .expect(409);
+
+  assert.equal(deleteResponse.body.message, "Ticket already used");
+
+  const listResponse = await request(app)
+    .get("/api/tickets")
+    .expect(200);
+
+  const ticket = listResponse.body.find(
+    (ticket) => ticket.id === id
+  );
+
+  assert.ok(ticket);
+  assert.equal(ticket.used, true);
+});
