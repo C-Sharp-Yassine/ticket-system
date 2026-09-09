@@ -55,6 +55,12 @@ router.get("/", (req, res) => {
 router.patch("/use", (req, res) => {
   const { code } = req.body;
 
+  if (!code) {
+    return res.status(400).json({
+      message: "Ticket code is required",
+    });
+  }
+
   const ticket = db
     .prepare(
       `
@@ -107,9 +113,7 @@ used_at = ?
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
-  const ticket = db
-    .prepare("SELECT * FROM tickets WHERE id = ?")
-    .get(id);
+  const ticket = db.prepare("SELECT * FROM tickets WHERE id = ?").get(id);
 
   if (!ticket) {
     return res.status(404).json({
