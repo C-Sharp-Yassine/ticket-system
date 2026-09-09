@@ -133,3 +133,11 @@ test("API allows requests from the frontend origin", async () => {
   assert.equal(response.headers["access-control-allow-origin"], "http://localhost:5173");
 });
 
+test ("PATCH /api/tickets/use returns 400 when ticket code is missing", async () => {
+  const response = await request(app)
+    .patch("/api/tickets/use")
+    .send({})
+    .expect(400);
+
+  assert.equal(response.body.message, "Ticket code is required");
+});
