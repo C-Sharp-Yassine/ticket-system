@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "db:init": "node src/db/initDb.js"
+    "db:init": "node src/db/initDb.js",
+    "start": "node src/server.js"
   },
   "keywords": [],
   "author": "",
