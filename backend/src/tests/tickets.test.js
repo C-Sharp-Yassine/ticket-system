@@ -62,3 +62,12 @@ test("PATCH /api/tickets/use prevents a ticket from being used twice", async () 
 
   assert.equal(secondUseResponse.body.message, "Ticket already used");
 });
+
+test("PATCH /api/tickets/use returns 404 for an unknown ticket code", async () => {
+  const response = await request(app)
+    .patch("/api/tickets/use")
+    .send({ code: "UNKNOWN-TICKET-CODE" })
+    .expect(404);
+
+  assert.equal(response.body.message, "Ticket not found");
+});
