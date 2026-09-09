@@ -104,4 +104,22 @@ used_at = ?
   });
 });
 
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+
+  const ticket = db
+    .prepare("SELECT * FROM tickets WHERE id = ?")
+    .get(id);
+
+  if (!ticket) {
+    return res.status(404).json({
+      message: "Ticket not found",
+    });
+  }
+
+  db.prepare("DELETE FROM tickets WHERE id = ?").run(id);
+
+  return res.status(204).send();
+});
+
 export default router;
