@@ -1,7 +1,5 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <HelloWorld />
+  <main>
+    <h1>Ticket System</h1>
+  </main>
 </template>
