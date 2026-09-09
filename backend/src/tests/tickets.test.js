@@ -123,3 +123,13 @@ test("DELETE /api/tickets/:id prevents deletion of a used ticket", async () => {
   assert.ok(ticket);
   assert.equal(ticket.used, true);
 });
+
+test("API allows requests from the frontend origin", async () => {
+  const response = await request(app)
+    .get("/api/tickets")
+    .set("Origin", "http://localhost:5173")
+    .expect(200);
+
+  assert.equal(response.headers["access-control-allow-origin"], "http://localhost:5173");
+});
+
