@@ -295,3 +295,35 @@ test("deletes an unused ticket when Delete is clicked", async () => {
     method: "DELETE",
   });
 });
+
+test("removes the deleted ticket from the list", async () => {
+  const unusedTicket = {
+    id: 1,
+    code: "ABC123",
+    created_at: "2026-09-10T00:00:00.000Z",
+    used: false,
+    used_at: null,
+  };
+
+  global.fetch = vi
+    .fn()
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => [unusedTicket],
+    })
+    .mockResolvedValueOnce({
+      ok: true,
+    });
+
+  const wrapper = mount(App);
+
+  await vi.waitFor(() => {
+    expect(wrapper.text()).toContain("ABC123");
+  });
+
+  await wrapper.find('[data-testid="delete-ticket-button"]').trigger("click");
+
+  await vi.waitFor(() => {
+    expect(wrapper.text()).not.toContain("ABC123");
+  });
+});
