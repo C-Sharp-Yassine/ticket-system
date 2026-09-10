@@ -139,3 +139,14 @@ test("displays whether tickets are used or unused", async () => {
     expect(wrapper.text()).toContain("Used");
   });
 });
+
+test("displays an input and button for using a ticket", () => {
+  const wrapper = mount(App);
+
+  const input = wrapper.find('input[placeholder="Ticket code"]');
+  const button = wrapper.find('[data-testid="use-ticket-button"]');
+
+  expect(input.exists()).toBe(true);
+  expect(button.exists()).toBe(true);
+  expect(button.text()).toBe("Use Ticket");
+});
