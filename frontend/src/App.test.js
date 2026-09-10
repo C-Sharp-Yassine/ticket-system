@@ -383,3 +383,28 @@ test("displays an error message for an unknown ticket code", async () => {
     expect(wrapper.text()).toContain("Ticket not found");
   });
 });
+
+test("displays an error message when a ticket is already used", async () => {
+  global.fetch = vi
+    .fn()
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => [],
+    })
+    .mockResolvedValueOnce({
+      ok: false,
+      status: 409,
+      json: async () => ({ message: "Ticket already used" }),
+    
+    });
+
+  const wrapper = mount(App);
+
+  await wrapper.find('input[placeholder="Ticket code"]').setValue("ABC123");
+
+  await wrapper.find('[data-testid="use-ticket-button"]').trigger("click");
+
+  await vi.waitFor(() => {
+    expect(wrapper.text()).toContain("Ticket already used");
+  });
+});
