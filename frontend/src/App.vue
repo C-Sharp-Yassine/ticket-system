@@ -18,6 +18,16 @@ async function fetchTickets() {
   tickets.value = await response.json();
 }
 
+async function useTicket() {
+  await fetch("http://localhost:3000/api/tickets/use", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ code: ticketCode.value }),
+  });
+}
+
 onMounted(fetchTickets);
 </script>
 
@@ -35,7 +45,9 @@ onMounted(fetchTickets);
       <h2>Use Ticket</h2>
 
       <input v-model="ticketCode" type="text" placeholder="Ticket code" />
-      <button data-testid="use-ticket-button">Use Ticket</button>
+      <button data-testid="use-ticket-button" @click="useTicket">
+        Use Ticket
+      </button>
     </section>
 
     <h2>Tickets</h2>
