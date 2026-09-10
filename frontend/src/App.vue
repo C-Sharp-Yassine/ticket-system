@@ -11,6 +11,7 @@ async function createTicket() {
   });
 
   createdTicket.value = await response.json();
+  tickets.value.push(createdTicket.value);
 }
 
 async function fetchTickets() {
