@@ -359,3 +359,27 @@ test("adds a created ticket to the ticket list", async () => {
     expect(ticketItems[0].text()).toContain("ABC123");
   });
 });
+
+test("displays an error message for an unknown ticket code", async () => {
+  global.fetch = vi
+    .fn()
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => [],
+    })
+    .mockResolvedValueOnce({
+      ok: false,
+      status: 404,
+      json: async () => ({ message: "Ticket not found" }),
+    });
+
+  const wrapper = mount(App);
+
+  await wrapper.find('input[placeholder="Ticket code"]').setValue("UNKNOWN");
+
+  await wrapper.find('[data-testid="use-ticket-button"]').trigger("click");
+
+  await vi.waitFor(() => {
+    expect(wrapper.text()).toContain("Ticket not found");
+  });
+});
