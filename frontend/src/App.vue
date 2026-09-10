@@ -62,6 +62,10 @@ onMounted(fetchTickets);
     <ul>
       <li v-for="ticket in tickets" :key="ticket.id">
         {{ ticket.code }} - {{ ticket.used ? "Used" : "Unused" }}
+
+        <button v-if="!ticket.used" data-testid="delete-ticket-button">
+          Delete
+        </button>
       </li>
     </ul>
   </main>
