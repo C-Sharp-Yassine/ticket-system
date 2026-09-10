@@ -108,3 +108,34 @@ test("displays tickets from the backend", async () => {
     expect(wrapper.text()).toContain("XYZ789");
   });
 });
+
+test("displays whether tickets are used or unused", async () => {
+  const mockTickets = [
+    {
+      id: 1,
+      code: "ABC123",
+      created_at: "2026-09-10T00:00:00.000Z",
+      used: false,
+      used_at: null,
+    },
+    {
+      id: 2,
+      code: "XYZ789",
+      created_at: "2026-09-10T00:05:00.000Z",
+      used: true,
+      used_at: "2026-09-10T00:10:00.000Z",
+    },
+  ];
+
+  global.fetch = vi.fn().mockResolvedValue({
+    ok: true,
+    json: async () => mockTickets,
+  });
+
+  const wrapper = mount(App);
+
+  await vi.waitFor(() => {
+    expect(wrapper.text()).toContain("Unused");
+    expect(wrapper.text()).toContain("Used");
+  });
+});
