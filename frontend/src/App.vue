@@ -36,10 +36,15 @@ async function useTicket() {
 }
 
 async function deleteTicket(id) {
-  await fetch(`http://localhost:3000/api/tickets/${id}`, {
+  const response = await fetch(`http://localhost:3000/api/tickets/${id}`, {
     method: "DELETE",
   });
+
+  if (response.ok) {
+    tickets.value = tickets.value.filter((ticket) => ticket.id !== id);
+  }
 }
+
 
 onMounted(fetchTickets);
 </script>
