@@ -186,3 +186,43 @@ test("uses a ticket when the Use Ticket button is clicked", async () => {
     }),
   });
 });
+
+test("updates the ticket status to used after using a ticket", async () => {
+  const unusedTicket = {
+    id: 1,
+    code: "ABC123",
+    created_at: "2026-09-10T00:00:00.000Z",
+    used: false,
+    used_at: null,
+  };
+
+  const usedTicket = {
+    ...unusedTicket,
+    used: true,
+    used_at: "2026-09-10T00:10:00.000Z",
+  };
+
+  global.fetch = vi
+    .fn()
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => [unusedTicket],
+    })
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => usedTicket,
+    });
+
+  const wrapper = mount(App);
+
+  await vi.waitFor(() => {
+    expect(wrapper.text()).toContain("ABC123 - Unused");
+  });
+
+  await wrapper.find('input[placeholder="Ticket code"]').setValue("ABC123");
+  await wrapper.find('[data-testid="use-ticket-button"]').trigger("click");
+
+  await vi.waitFor(() => {
+    expect(wrapper.text()).toContain("ABC123 - Used");
+  });
+});
