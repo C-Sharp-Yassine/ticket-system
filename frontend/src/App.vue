@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue";
 
 const createdTicket = ref(null);
 const tickets = ref([]);
+const ticketCode = ref("");
 
 async function createTicket() {
   const response = await fetch("http://localhost:3000/api/tickets", {
@@ -29,6 +30,13 @@ onMounted(fetchTickets);
     <p v-if="createdTicket">
       {{ createdTicket.code }}
     </p>
+
+    <section>
+      <h2>Use Ticket</h2>
+
+      <input v-model="ticketCode" type="text" placeholder="Ticket code" />
+      <button data-testid="use-ticket-button">Use Ticket</button>
+    </section>
 
     <h2>Tickets</h2>
 
