@@ -34,7 +34,7 @@ onMounted(fetchTickets);
 
     <ul>
       <li v-for="ticket in tickets" :key="ticket.id">
-        {{ ticket.code }}
+        {{ ticket.code }} - {{ ticket.used ? "Used" : "Unused" }}
       </li>
     </ul>
   </main>
