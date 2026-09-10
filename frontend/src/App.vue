@@ -4,6 +4,7 @@ import { onMounted, ref } from "vue";
 const createdTicket = ref(null);
 const tickets = ref([]);
 const ticketCode = ref("");
+const errorMessage = ref("");
 
 async function createTicket() {
   const response = await fetch("http://localhost:3000/api/tickets", {
@@ -20,6 +21,8 @@ async function fetchTickets() {
 }
 
 async function useTicket() {
+  errorMessage.value = "";
+
   const response = await fetch("http://localhost:3000/api/tickets/use", {
     method: "PATCH",
     headers: {
@@ -29,10 +32,16 @@ async function useTicket() {
       code: ticketCode.value,
     }),
   });
-  const updatedTicket = await response.json();
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    errorMessage.value = data.message;
+    return;
+  }
 
   tickets.value = tickets.value.map((ticket) =>
-    ticket.id === updatedTicket.id ? updatedTicket : ticket,
+    ticket.id === data.id ? data : ticket,
   );
 }
 
@@ -45,7 +54,6 @@ async function deleteTicket(id) {
     tickets.value = tickets.value.filter((ticket) => ticket.id !== id);
   }
 }
-
 
 onMounted(fetchTickets);
 </script>
@@ -67,6 +75,8 @@ onMounted(fetchTickets);
       <button data-testid="use-ticket-button" @click="useTicket">
         Use Ticket
       </button>
+
+      <p v-if="errorMessage">{{ errorMessage }}</p>
     </section>
 
     <h2>Tickets</h2>
@@ -75,10 +85,11 @@ onMounted(fetchTickets);
       <li v-for="ticket in tickets" :key="ticket.id">
         {{ ticket.code }} - {{ ticket.used ? "Used" : "Unused" }}
 
-        <button 
-        v-if="!ticket.used" 
-        data-testid="delete-ticket-button" 
-        @click="deleteTicket(ticket.id)">
+        <button
+          v-if="!ticket.used"
+          data-testid="delete-ticket-button"
+          @click="deleteTicket(ticket.id)"
+        >
           Delete
         </button>
       </li>
