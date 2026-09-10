@@ -261,3 +261,37 @@ test("displays a Delete button for unused tickets only", async () => {
     expect(deleteButtons[0].text()).toBe("Delete");
   });
 });
+
+test("deletes an unused ticket when Delete is clicked", async () => {
+  const unusedTicket = {
+    id: 1,
+    code: "ABC123",
+    created_at: "2026-09-10T00:00:00.000Z",
+    used: false,
+    used_at: null,
+  };
+
+  global.fetch = vi
+    .fn()
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => [unusedTicket],
+    })
+    .mockResolvedValueOnce({
+      ok: true,
+    });
+
+  const wrapper = mount(App);
+
+  await vi.waitFor(() => {
+    expect(wrapper.find('[data-testid="delete-ticket-button"]').exists()).toBe(
+      true,
+    );
+  });
+
+  await wrapper.find('[data-testid="delete-ticket-button"]').trigger("click");
+
+  expect(fetch).toHaveBeenCalledWith("http://localhost:3000/api/tickets/1", {
+    method: "DELETE",
+  });
+});
