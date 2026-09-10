@@ -327,3 +327,35 @@ test("removes the deleted ticket from the list", async () => {
     expect(wrapper.text()).not.toContain("ABC123");
   });
 });
+
+test("adds a created ticket to the ticket list", async () => {
+  const newTicket = {
+    id: 1,
+    code: "ABC123",
+    created_at: "2026-09-10T00:00:00.000Z",
+    used: false,
+    used_at: null,
+  };
+
+  global.fetch = vi
+    .fn()
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => [],
+    })
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => newTicket,
+    });
+
+  const wrapper = mount(App);
+
+  await wrapper.find("button").trigger("click");
+
+  await vi.waitFor(() => {
+    const ticketItems = wrapper.findAll("li");
+
+    expect(ticketItems).toHaveLength(1);
+    expect(ticketItems[0].text()).toContain("ABC123");
+  });
+});
