@@ -226,3 +226,38 @@ test("updates the ticket status to used after using a ticket", async () => {
     expect(wrapper.text()).toContain("ABC123 - Used");
   });
 });
+
+test("displays a Delete button for unused tickets only", async () => {
+  const mockTickets = [
+    {
+      id: 1,
+      code: "ABC123",
+      created_at: "2026-09-10T00:00:00.000Z",
+      used: false,
+      used_at: null,
+    },
+    {
+      id: 2,
+      code: "XYZ789",
+      created_at: "2026-09-10T00:05:00.000Z",
+      used: true,
+      used_at: "2026-09-10T00:10:00.000Z",
+    },
+  ];
+
+  global.fetch = vi.fn().mockResolvedValue({
+    ok: true,
+    json: async () => mockTickets,
+  });
+
+  const wrapper = mount(App);
+
+  await vi.waitFor(() => {
+    const deleteButtons = wrapper.findAll(
+      '[data-testid="delete-ticket-button"]',
+    );
+
+    expect(deleteButtons).toHaveLength(1);
+    expect(deleteButtons[0].text()).toBe("Delete");
+  });
+});
