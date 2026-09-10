@@ -1,6 +1,13 @@
 import { mount } from "@vue/test-utils";
-import { test, expect, vi } from "vitest";
+import { beforeEach, test, expect, vi } from "vitest";
 import App from "./App.vue";
+
+beforeEach(() => {
+  global.fetch = vi.fn().mockResolvedValue({
+    ok: true,
+    json: async () => [],
+  });
+});
 
 test("displays the Ticket System heading", () => {
   const wrapper = mount(App);
@@ -23,12 +30,19 @@ test("creates a tickets when the Create Ticket is clicked", async () => {
     used_at: null,
   };
 
-  global.fetch = vi.fn().mockResolvedValue({
-    ok: true,
-    json: async () => mockTicket,
-  });
+  global.fetch = vi
+    .fn()
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => [],
+    })
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockTicket,
+    });
 
   const wrapper = mount(App);
+
   await wrapper.find("button").trigger("click");
 
   expect(fetch).toHaveBeenCalledWith("http://localhost:3000/api/tickets", {
@@ -45,10 +59,16 @@ test("displays the created ticket code", async () => {
     used_at: null,
   };
 
-  global.fetch = vi.fn().mockResolvedValue({
-    ok: true,
-    json: async () => mockTicket,
-  });
+  global.fetch = vi
+    .fn()
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => [],
+    })
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockTicket,
+    });
 
   const wrapper = mount(App);
 
