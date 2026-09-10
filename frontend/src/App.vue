@@ -35,6 +35,12 @@ async function useTicket() {
   );
 }
 
+async function deleteTicket(id) {
+  await fetch(`http://localhost:3000/api/tickets/${id}`, {
+    method: "DELETE",
+  });
+}
+
 onMounted(fetchTickets);
 </script>
 
@@ -63,7 +69,10 @@ onMounted(fetchTickets);
       <li v-for="ticket in tickets" :key="ticket.id">
         {{ ticket.code }} - {{ ticket.used ? "Used" : "Unused" }}
 
-        <button v-if="!ticket.used" data-testid="delete-ticket-button">
+        <button 
+        v-if="!ticket.used" 
+        data-testid="delete-ticket-button" 
+        @click="deleteTicket(ticket.id)">
           Delete
         </button>
       </li>
