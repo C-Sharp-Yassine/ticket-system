@@ -150,3 +150,39 @@ test("displays an input and button for using a ticket", () => {
   expect(button.exists()).toBe(true);
   expect(button.text()).toBe("Use Ticket");
 });
+
+test("uses a ticket when the Use Ticket button is clicked", async () => {
+  const usedTicket = {
+    id: 1,
+    code: "ABC123",
+    created_at: "2026-09-10T00:00:00.000Z",
+    used: true,
+    used_at: "2026-09-10T00:10:00.000Z",
+  };
+
+  global.fetch = vi
+    .fn()
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => [],
+    })
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => usedTicket,
+    });
+
+  const wrapper = mount(App);
+
+  await wrapper.find('input[placeholder="Ticket code"]').setValue("ABC123");
+  await wrapper.find('[data-testid="use-ticket-button"]').trigger("click");
+
+  expect(fetch).toHaveBeenCalledWith("http://localhost:3000/api/tickets/use", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      code: "ABC123",
+    }),
+  });
+});
