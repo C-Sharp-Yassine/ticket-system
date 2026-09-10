@@ -19,13 +19,20 @@ async function fetchTickets() {
 }
 
 async function useTicket() {
-  await fetch("http://localhost:3000/api/tickets/use", {
+  const response = await fetch("http://localhost:3000/api/tickets/use", {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ code: ticketCode.value }),
+    body: JSON.stringify({
+      code: ticketCode.value,
+    }),
   });
+  const updatedTicket = await response.json();
+
+  tickets.value = tickets.value.map((ticket) =>
+    ticket.id === updatedTicket.id ? updatedTicket : ticket,
+  );
 }
 
 onMounted(fetchTickets);
