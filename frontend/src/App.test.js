@@ -395,7 +395,6 @@ test("displays an error message when a ticket is already used", async () => {
       ok: false,
       status: 409,
       json: async () => ({ message: "Ticket already used" }),
-    
     });
 
   const wrapper = mount(App);
@@ -406,5 +405,27 @@ test("displays an error message when a ticket is already used", async () => {
 
   await vi.waitFor(() => {
     expect(wrapper.text()).toContain("Ticket already used");
+  });
+});
+
+test("displays an error message when the ticket code is missing", async () => {
+  global.fetch = vi
+    .fn()
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => [],
+    })
+    .mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      json: async () => ({ message: "Ticket code is required" }),
+    });
+
+  const wrapper = mount(App);
+
+  await wrapper.find('[data-testid="use-ticket-button"]').trigger("click");
+
+  await vi.waitFor(() => {
+    expect(wrapper.text()).toContain("Ticket code is required");
   });
 });
